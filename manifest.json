@@ -1,0 +1,10 @@
+{
+	"id": "Annot_Extractor",
+	"name": "Annot Extractor",
+	"version": "1.0.0",
+	"minAppVersion": "0.0.1",
+	"description": "Extract PDF annotations to .md file",
+	"author": "Linda Wang",
+	
+	"isDesktopOnly": false
+}
