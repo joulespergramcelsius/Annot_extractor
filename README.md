@@ -13,3 +13,6 @@ Example of Sticky notes | Example of Highlight
 ![](media/select.png)
 3. The PDF is uploaded to your vault. And a .md file listing all comments is created.
 ![](media/md.png)
+
+# Reference
+Adapted from ![Obsidian Sample Plugin](https://github.com/obsidianmd/obsidian-sample-plugin)
