@@ -2,6 +2,8 @@ This [Obsidian](https://obsidian.md/) Plugin allows you to upload a PDF file to 
 
 The PDF can be annotated in with hightlight or sticky notes. Works best with comments done with Microsoft Edge and Adobe Acrobat.
 ![Sticky notes](media/FB.png) | ![Highlight](media/Highlight.png)
+------------------------------ | ------------------------------
+Example of Sticky notes | Example of Highlight
 
 # Demo
 
