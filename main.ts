@@ -1,14 +1,16 @@
-import { App, Editor, MarkdownView, Modal, Notice, TFile, Plugin, PluginSettingTab, Setting, normalizePath  } from 'obsidian';
-import { PDFDocument,PDFArray,PDFDict,PDFName  } from "pdf-lib";
+import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, normalizePath  } from 'obsidian';
+import { PDFDocument,PDFDict,PDFName  } from "pdf-lib"; //PDFArray
 
-// Remember to rename these classes and interfaces!
+
 
 interface AnnotExtractorSettings {
   attachmentsPath: string;
+  outputPath: string;
 }
 
 const DEFAULT_SETTINGS: AnnotExtractorSettings = {
   attachmentsPath: "", // empty string = vault root
+  outputPath: "",
 };
 
 
@@ -71,7 +73,7 @@ export default class Annot_Extractor extends Plugin {
     			if (!hasAnnotations) {
       			new Notice("No annotations found in the PDF.");
     			} else {
-      			const mdFileName = normalizePath(`Annotations of ${file.name}.md`);
+      			const mdFileName = normalizePath(`${this.settings.outputPath}/Annotations of ${file.name}.md`);
       			await this.app.vault.create(mdFileName, content);
       			new Notice(`Annotations extracted to ${mdFileName}`);
     			}
@@ -82,16 +84,15 @@ export default class Annot_Extractor extends Plugin {
 		
 		
 
-		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		// Setting tab to configure path
+		this.addSettingTab(new SettingTab(this.app, this));
 
 		
 		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
 			console.log('click', evt);
 		});
 
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+		
 	}
 	
 
@@ -118,7 +119,7 @@ export default class Annot_Extractor extends Plugin {
 }
 
 
-class SampleSettingTab extends PluginSettingTab {
+class SettingTab extends PluginSettingTab {
 	plugin: Annot_Extractor;
 
 	constructor(app: App, plugin: Annot_Extractor) {
@@ -136,7 +137,11 @@ class SampleSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
       		.setName("Attachments Folder Path")
       		.setDesc(
-        		"Folder path to save PDFs and generated annotation notes. Leave empty for vault root."
+				createFragment((frag) => {
+					frag.createEl("div",{ text: "Folder path to save PDFs. Leave empty for vault root."});
+					frag.createEl("div",{ text: "Example: Attachment/PDF_files"});
+				})
+        		
       		)
       		.addText((text) =>
         		text
@@ -144,6 +149,26 @@ class SampleSettingTab extends PluginSettingTab {
           		.setValue(this.plugin.settings.attachmentsPath)
           		.onChange(async (value) => {
             		this.plugin.settings.attachmentsPath = value.trim();
+            		await this.plugin.saveSettings();
+          		})
+      		);
+
+
+		new Setting(containerEl)
+      		.setName("Output Folder Path")
+      		.setDesc(
+				createFragment((frag) => {
+					frag.createEl("div",{ text: "Folder path to save generated annotation notes. Leave empty for vault root."});
+					frag.createEl("div",{ text: "Example: Notes/PDF_notes"});
+				})
+        		
+      		)
+      		.addText((text) =>
+        		text
+          		.setPlaceholder("Path to notes")
+          		.setValue(this.plugin.settings.outputPath)
+          		.onChange(async (value) => {
+            		this.plugin.settings.outputPath = value.trim();
             		await this.plugin.saveSettings();
           		})
       		);
